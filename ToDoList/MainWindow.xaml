@@ -1,0 +1,251 @@
+﻿<Window x:Class="ToDoList.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ToDoList"
+        xmlns:Converters="clr-namespace:PresentationLayer.Converters"
+        mc:Ignorable="d"
+        Title="ToDoList" Height="500" Width="1000"
+        Background="#FFEDF2F4"
+        MinHeight="500" MinWidth="1000" >
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Converters:IntToPriorityConverter x:Key="IntToPriorityConverter" />
+            <Converters:DeadlineToColorConverter x:Key="DeadlineToColorConverter" />
+            <Converters:IntToPriorityColorConverter x:Key="IntToPriorityColorConverter" />
+
+            <DataTemplate x:Key="DefaultTemplate">
+                <TextBlock FontSize="50" TextAlignment="Center" VerticalAlignment="Center" Padding="25"
+                           Text="To Do List" FontWeight="Bold" Foreground="#22FFFFFF">
+                </TextBlock>
+            </DataTemplate>
+
+            <DataTemplate x:Key="TaskFormTemplate">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Title-->
+                    <TextBlock Text="Title:" FontSize="20"  Grid.Row="0"></TextBlock>
+                    <TextBox  FontSize="20" Grid.Row="0" Grid.Column="1"  Text="{Binding Title}"></TextBox>
+                    <!-- Deadline-->
+                    <TextBlock Text="Deadline:" FontSize="20"  Grid.Row="1"></TextBlock>
+                    <DatePicker  FontSize="20" Grid.Row="1" Grid.Column="1" SelectedDate="{Binding Deadline}"></DatePicker>
+                    <!-- Priority-->
+                    <TextBlock Text="Priority:" FontSize="20"  Grid.Row="2"></TextBlock>
+                    <ComboBox FontSize="20" Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding Priority}">
+                        <ComboBoxItem Content="Urgent" />
+                        <ComboBoxItem Content="Important" />
+                        <ComboBoxItem Content="Normal" />
+                        <ComboBoxItem Content="Minor" />
+                    </ComboBox>
+                    <!-- Description-->
+                    <TextBlock Text="Description:" FontSize="20" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,0,10"></TextBlock>
+                    <TextBox FontSize="20" TextWrapping="Wrap" Grid.Row="4" Grid.ColumnSpan="4" Text="{Binding Description}"></TextBox>
+
+                    <!-- Buttons-->
+                    <Button Content="Add" Click="AddTask_Click"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Grid.Row="5" Grid.Column="3" Style="{StaticResource RedRoundedButtonStyle}"></Button>
+                    <Button Content="Back" Click="Back_Click"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Grid.Row="5" Grid.Column="2" Style="{StaticResource BlueRoundedButtonStyle}"></Button>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="EditTaskTemplate">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Title-->
+                    <TextBlock Text="Title:" FontSize="20"  Grid.Row="0"></TextBlock>
+                    <TextBox  FontSize="20" Grid.Row="0" Grid.Column="1"  Text="{Binding Title}"></TextBox>
+                    <!-- Deadline-->
+                    <TextBlock Text="Deadline:" FontSize="20"  Grid.Row="1"></TextBlock>
+                    <DatePicker  FontSize="20" Grid.Row="1" Grid.Column="1" SelectedDate="{Binding Deadline}"></DatePicker>
+                    <!-- Priority-->
+                    <TextBlock Text="Priority:" FontSize="20"  Grid.Row="2"></TextBlock>
+                    <ComboBox FontSize="20" Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding Priority}">
+                        <ComboBoxItem Content="Urgent" />
+                        <ComboBoxItem Content="Important" />
+                        <ComboBoxItem Content="Normal" />
+                        <ComboBoxItem Content="Minor" />
+                    </ComboBox>
+                    <!-- Description-->
+                    <TextBlock Text="Description:" FontSize="20" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,0,10"></TextBlock>
+                    <TextBox FontSize="20" TextWrapping="Wrap" Grid.Row="4" Grid.ColumnSpan="4" Text="{Binding Description}"></TextBox>
+
+                    <!-- Buttons-->
+                    <Button Content="Save" Click="SaveChanges_Click"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Grid.Row="5" Grid.Column="3" Style="{StaticResource RedRoundedButtonStyle}"></Button>
+                    <Button Content="Back" Click="Back_Click"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Grid.Row="5" Grid.Column="2" Style="{StaticResource BlueRoundedButtonStyle}"></Button>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="TaskDetailsTemplate">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+
+                    </Grid.RowDefinitions>
+                    <!-- Title-->
+                    <TextBlock Text="{Binding Title}" FontSize="30" Padding="10, 0, 10, 10" Grid.Row="0"></TextBlock>
+
+                    <!-- Deadline-->
+
+                    <TextBlock FontSize="14" Padding="10" Grid.Row="2">
+                            <Run>Deadline: </Run>
+                            <Run>
+                                <Run.Text>
+                                    <MultiBinding StringFormat="{}{0:dd/MM/yyyy}">
+                                        <Binding Path="Deadline"/>
+                                    </MultiBinding>
+                                </Run.Text>
+                                <Run.Background>
+                                    <Binding Path="Deadline" Converter="{StaticResource DeadlineToColorConverter}"/>
+                                </Run.Background>
+                            </Run>
+                    </TextBlock>
+
+                    <!-- Description-->
+                    <TextBlock Text="{Binding Description}" FontSize="16" TextWrapping="Wrap" Padding="10, 0, 10, 10" Grid.Row="3"></TextBlock>
+
+                    <!-- Buttons-->
+                    <Button Content="Edit" Click="EditTask_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Grid.Row="4" Grid.Column="1" Style="{StaticResource RedRoundedButtonStyle}" />
+                    <Button Content="Back" Click="Back_Click"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Grid.Row="4" Grid.Column="0" Style="{StaticResource BlueRoundedButtonStyle}"></Button>
+                </Grid>
+            </DataTemplate>
+
+
+            <DataTemplate x:Key="TaskTemplate">
+                <Border Width="380"  Height="Auto" Background="#FFEDF2F4" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Height="20" BorderBrush="#FF000000" BorderThickness="0,0,0,2" Margin="0,0,0,-2" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0">
+                            <TextBlock Text="{Binding Path=Priority, Converter={StaticResource IntToPriorityConverter}}" Background="{Binding Path=Priority, Converter={StaticResource IntToPriorityColorConverter}}" TextAlignment="Center" />
+                        </Border>
+
+                        <TextBlock Text="{Binding Path=Title}" FontWeight="Bold" FontSize="20" Margin="10,5,10,0" Grid.Row="1" Grid.Column="0"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,0,0,5">
+                            <Run>Deadline: </Run>
+                            <Run>
+                                <Run.Text>
+                                    <MultiBinding StringFormat="{}{0:dd/MM/yyyy}">
+                                        <Binding Path="Deadline"/>
+                                    </MultiBinding>
+                                </Run.Text>
+                                <Run.Background>
+                                    <Binding Path="Deadline" Converter="{StaticResource DeadlineToColorConverter}"/>
+                                </Run.Background>
+                            </Run>
+                        </TextBlock>
+
+                        <Button Content="Complete" Click="Complete_Click" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource GreenRoundedButtonStyle}" HorizontalAlignment="Left" Margin="10,10,30,10" ></Button>
+
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+
+            <local:MyDataTemplateSelector x:Key="TemplateSelector"
+                 DefaultTemplate="{StaticResource DefaultTemplate}"
+                 TaskFormTemplate="{StaticResource TaskFormTemplate}"
+                 TaskDetailsTemplate="{StaticResource TaskDetailsTemplate}"
+                 EditTaskTemplate="{StaticResource EditTaskTemplate}"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Left side-->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Background="#FFa7a9b0" CornerRadius="10" Width="400" VerticalAlignment="Stretch" Margin="10" Padding="10">
+                <ListBox x:Name="taskListBox" Style="{StaticResource ListBoxStyle1}" SelectionChanged="taskListBox_SelectionChanged"
+                    ItemsSource="{Binding Tasks}" 
+                    ItemTemplate="{StaticResource TaskTemplate}">
+
+                </ListBox>
+                
+            </Border>
+            <Button Grid.Row="1" Content="New Task" Style="{StaticResource RedRoundedButtonStyle}" Margin="10, 0,10,10" HorizontalAlignment="Center" Click="ShowNewTaskForm_Click"></Button>
+            
+        </Grid>
+        
+
+        <!-- Right side-->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Background="#FFC9CACC" CornerRadius="10" Margin="0,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" >
+
+                <ContentControl Content="{Binding CurrentTask}"
+                ContentTemplateSelector="{StaticResource TemplateSelector}" />
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
